@@ -4,7 +4,6 @@ from django.contrib.auth.models import User
 from blogpost.models import Post
 from blogpost.views import PostListView, PostDetailView, PostCreateView
 
-# blogpost/tests.py
 
 class BlogpostViewTests(TestCase):
     def setUp(self):
@@ -21,6 +20,7 @@ class BlogpostViewTests(TestCase):
         url = reverse('blogpost:post_list')
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        print(response.status_code)
         self.assertTemplateUsed(response, 'blogpost/post_list.html')
         self.assertContains(response, self.post.title)
         self.assertQuerysetEqual(
@@ -51,7 +51,7 @@ class BlogpostViewTests(TestCase):
             'status': 'published',
         }
         response = self.client.post(url, data=post_data)
-        self.assertEqual(response.status_code, 302)  # Redirect after post creation
+        self.assertEqual(response.status_code, 302)
         new_post = Post.objects.get(slug='another-test-post')
         self.assertEqual(new_post.title, 'Another Test Post')
         self.assertEqual(new_post.author, self.user)
@@ -61,6 +61,7 @@ class BlogpostViewTests(TestCase):
     def test_post_create_view_redirect_for_anonymous(self):
         url = reverse('blogpost:post_create')
         response = self.client.get(url)
+        print(response.status_code)
         self.assertNotEqual(response.status_code, 200)
         self.assertRedirects(response, f'/accounts/login/?next={url}')
 
